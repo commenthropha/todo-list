@@ -1,0 +1,37 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
+
+
+.gradient
+{
+
+    /* ff 3.6+ */
+    background:-moz-radial-gradient(ellipse at 100% 100%, rgba(0, 255, 172, 1) 0%, rgba(6, 60, 197, 1) 100%);
+
+    /* safari 5.1+,chrome 10+ */
+    background:-webkit-radial-gradient(ellipse at 100% 100%, rgba(0, 255, 172, 1) 0%, rgba(6, 60, 197, 1) 100%);
+
+    /* opera 11.10+ */
+    background:-o-radial-gradient(ellipse at 100% 100%, rgba(0, 255, 172, 1) 0%, rgba(6, 60, 197, 1) 100%);
+
+    /* ie 10+ */
+    background:-ms-radial-gradient(ellipse at 100% 100%, rgba(0, 255, 172, 1) 0%, rgba(6, 60, 197, 1) 100%);
+
+    /* global 92%+ browsers support */
+    background:radial-gradient(ellipse at 100% 100%, rgba(0, 255, 172, 1) 0%, rgba(6, 60, 197, 1) 100%);
+
+}
+
+.navbar {
+    background-color: transparent;
+}
+
+.box {
+    background-color: rgba(189, 195, 199, 0.3);
+    text-align: center;
+    color: white;
+    max-width: 300px;
+    margin: auto;
+    outline-style: solid;
+    outline-width: 2px;
+    outline-color: white;
+}
