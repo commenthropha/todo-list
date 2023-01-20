@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
-    <title>To-Do List</title>
+    <title>Bulma</title>
 </head>
 
-<body>
-    <div class='gradient px-2 pb-6'>
-        {% include 'components/navbarPre.html' %}
-                <h1 class='has-text-white title is-1 is-size-2-mobile center has-text-centered mt-6 px-6'>Productivity Just Got Easier.</h1>
-                <h2 class='has-text-white subtitle is-4 center has-text-centered mt-2 px-6'>Get Things Done with <span class='has-text-weight-semibold'>Chronos</span></h2>
-                <div class="box is-centered">
-                    A Modern To-Do List Application
-                </div>
-    </div>
-    <div class ='px-2 pb-6'>
-        <h1 class = 'title is-3 mt-6 px-5'>Your platform for getting things done</h1>    
-    </div>
+<body class='gradient px-2 py-3'>
+    {% include 'components/navbarPre.html' %}
+    <div class='center has-text-centered'>
+        <h1 class='text-focus-in has-text-white title is-1 is-size-2-mobile center mt-10 px-3'>Productivity Just Got Easier.</h1>
+        <h2 class='fade-in has-text-white subtitle is-3 is-size-4-mobile enter mt-2 mb-3 px-6'>Get Things Done with <span
+                class='has-text-weight-semibold'>BULMA</span></h2>
+        <h3 class='fade-in has-text-white subtitle is-6 center px-6 mb-6'>A Modern To-Do List Application</h3>
 
-
+        <div class="mx-2">
+            <button class="mx-1 button is-light is-medium">
+                Log in
+            </button>
+            <button class="mx-1 button is-primary is-medium">
+                <strong>Sign up</strong>
+            </button>
+        </div>
+    </div>
 
 </body>
 
