@@ -49,6 +49,10 @@ body {
     outline-color: white;
 }
 
+.pt-8 {
+    padding-top: 6.25rem;
+}
+
 .mt-10 {
     margin-top: 15rem;
 }
@@ -61,6 +65,11 @@ body {
     .mt-10 {
         margin-top: 8rem;
     }
+
+    .pt-8 {
+        padding-top: 2.1rem;
+    }
+
 }
 
 .text-focus-in {
