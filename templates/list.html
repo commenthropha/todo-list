@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body class= 'is-flex is-flex-direction-column is-justify-content-space-between'>
+
+    <div class = "px-2 py-3">
+        {% include 'components/navbar.html' %}
+        
+        <div class = 'my-3 px-6 py-5'>
+            <h1 class = 'title has-text-primary is-2 is-size-2-mobile'>
+                {{list.name}}
+            </h1>
+        </div>
+
+        <div class = 'px-6'>
+            {% for entry in listItems %}
+                <p class = 'is-5'>
+                    {{entry.name}}
+                    <br>
+                </a>
+            {% else %}
+            <p>
+                No Lists Available
+            </p>
+            {% endfor %}
+        </div>
+        <br>
+    </div>
+
+    {% include 'components/footer.html' %}
+</body>
+{% endblock %}

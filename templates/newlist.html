@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+    <script src="{{url_for('static', filename='js/newlist.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+<body class='is-flex is-flex-direction-column is-justify-content-space-between'>
+
+    <div class="px-2 py-3">
+        {% include 'components/navbar.html' %}
+
+        <div class='my-3 px-6 py-5'>
+            <h1 class='title has-text-primary is-2 is-size-2-mobile'>
+                Create a New List
+            </h1>
+        </div>
+
+        <form id="mainform" method="post" class='px-6'>
+            <div class="field">
+                <label for="listname" class="label">Name</label>
+                <div class="control">
+                    <input class="input" name="listname" type="text" placeholder="Enter your name" required>
+                </div>
+            </div>
+
+            <div id="inputs">
+            </div>
+
+            <button type='button' onclick="newListItem()" class="mt-4 button is-light">Add a list item</button>
+            <button type='button' onclick="removeItem()" class="mt-4 button is-light">Remove a list item</button>
+
+            <div class="field is-grouped mt-6">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Submit</button>
+                </div>
+            </div>
+
+            <input type="hidden" name="countTracker" id="countTracker" value="1" />
+        </form>
+        <br>
+    </div>
+
+    {% include 'components/footer.html' %}
+</body>
+{% endblock %}

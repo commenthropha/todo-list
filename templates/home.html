@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body class='is-flex is-flex-direction-column is-justify-content-space-between'>
+    <div class = 'px-2 py-3'>
+
+    {% include 'components/navbar.html' %}
+
+    <div class = 'is-centered my-3 px-6 py-5'>
+        <h1 class = 'title has-text-primary is-2 is-size-2-mobile'>
+            Welcome Back {{user.username}}
+        </h1>
+        <h2 class = "subtitle is-5 is-size-5-mobile enter m-2 px-3">
+            Here are your most recent lists to jump back into:
+        </h2>
+        <div class = 'px-6 mt-5'>
+            {% for entry in lists %}
+                <a class = 'subtitle py-2 has-text-weight-light' href="/lists/{{entry.id}}">
+                    - {{entry.name}}
+                    <br>
+                </a>
+            {% else %}
+            <p>
+                No Lists Available
+            </p>
+            {% endfor %}
+        </div>
+        <h2 class = "subtitle is-5 is-size-5-mobile enter m-2 px-3">
+            Or, <a href = '/newlist.html'>create a new list</a>
+        </h2>
+    </div>
+    </div>
+
+    {% include 'components/footer.html' %}
+</body>
+{% endblock %}

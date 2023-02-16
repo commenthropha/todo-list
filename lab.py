@@ -1,11 +1,22 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask_login import LoginManager, login_user, current_user, logout_user
+
 app = Flask(__name__)
-
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///todo.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'K0REWAN@ND3SUKA?!?!'   
+
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(id=user_id).first()
 
 # set up a 'model' for the data you want to store
 from db_schema import db, User, List, ListItem, dbinit
@@ -27,11 +38,106 @@ if resetdb:
 def index():
     return render_template('index.html')
 
-@app.route('/login.html')
+@app.route('/login.html', methods = ['GET','POST'])
 def login():
+    users = User.query.all()
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = User.query.filter_by(username=username).first()
+
+        if user:
+            if(check_password_hash(user.password, password)):
+                login_user(user)
+                return redirect(url_for('lists', lists=lists))
+            else:
+                flash("This is sad")
+        else:
+            flash('This username does not exist')
+    
     return render_template('login.html')
 
-@app.route('/signup.html')
+@app.route('/signup.html', methods = ['GET','POST'])
 def signup():
+    users = User.query.all()
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        for user in users:
+            if user.username == username:
+                flash('This username is already taken, please try again.')
+                return redirect(url_for('signup'))
+
+        user = User(username=username, password=generate_password_hash(password))
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for('home', user=user, lists=lists))
+        
     return render_template('signup.html')
 
+@app.route('/lists.html')
+def lists():
+    if current_user.is_authenticated:
+        lists = List.query.filter_by(user_id= current_user.id ).all()
+        return render_template('lists.html', lists=lists)
+    else: 
+        return "Error: user is not logged in"
+        
+
+@app.route('/lists/<int:list_id>/')
+def showlist(list_id):
+    list = List.query.get_or_404(list_id)
+    lists = List.query.filter_by(user_id=current_user.id ).all()
+    listItems = ListItem.query.filter_by(list_id=list_id).all()
+    return render_template('list.html', list=list, lists=lists, listItems=listItems)
+
+@app.route('/newlist.html', methods = ['GET','POST'])
+def newlist():
+
+    if current_user.is_authenticated:
+        lists = List.query.filter_by(user_id=current_user.id).all()
+        user_id = current_user.id
+    else: 
+        return "Error: user is not logged in"
+
+    if request.method == "POST":
+        listname = request.form["listname"]
+        count = request.form["countTracker"]
+        list = List(name=listname, user_id=user_id)
+        db.session.add(list)
+        db.session.commit()
+        
+        for i in range(1, int(count)):
+            itemname = request.form["listitem" + str(i)]
+            listitem = ListItem(name=itemname,completed=False,list_id=list.id)
+            db.session.add(listitem)
+            
+        db.session.commit()
+
+        return redirect(url_for('lists', lists=lists))
+
+    return render_template('newlist.html', lists=lists)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/navbar.html')
+def navbar():
+    if current_user.is_authenticated:
+        lists = List.query.filter_by(user_id=current_user.id ).all()
+        return render_template('navbar.html', lists=lists)
+    else: 
+        return "Error: user is not logged in"
+
+@app.route('/home.html')
+def home():
+    if current_user.is_authenticated:
+        user = User.query.filter_by(id=current_user.id ).first()
+        lists = List.query.filter_by(user_id=current_user.id ).limit(5).all()
+        return render_template('home.html', user=user, lists=lists)
+    else: 
+        return "Error: user is not logged in"

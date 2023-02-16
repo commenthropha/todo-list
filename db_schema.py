@@ -1,13 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 # create the database interface
 db = SQLAlchemy()
 
 # a model of a user for the database
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__='users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True)
+    username = db.Column(db.String(), unique=True)
     password = db.Column(db.Text())
 
     def __init__(self, username, password):  
@@ -32,10 +33,12 @@ class ListItem(db.Model):
     __tablename__='items'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text())
+    completed = db.Column(db.Boolean())
     list_id = db.Column(db.Integer)  # this ought to be a "foreign key"
 
-    def __init__(self, name, list_id):
+    def __init__(self, name, completed, list_id):
         self.name=name
+        self.completed = completed
         self.list_id=list_id
 
 # put some data into the tables
@@ -60,10 +63,10 @@ def dbinit():
     shopping_id= List.query.filter_by(name="Shopping").first().id
 
     all_items = [
-        ListItem("Potatoes",shopping_id), 
-        ListItem("Shampoo", shopping_id),
-        ListItem("Wash up",chores_id), 
-        ListItem("Vacuum bedroom",chores_id)
+        ListItem("Potatoes", False, shopping_id), 
+        ListItem("Shampoo", False, shopping_id),
+        ListItem("Wash up", True, chores_id), 
+        ListItem("Vacuum bedroom", True, chores_id)
         ]
     db.session.add_all(all_items)
 

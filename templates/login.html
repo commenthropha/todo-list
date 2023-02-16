@@ -1,24 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
-  <title>Sign In</title>
-</head>
-
+{% block content %}
 <body class='gradient px-2 py-3'>
   {% include 'components/navbarPre.html' %}
 
+  <form id="main" method="post">
   <div class='center m-3 px-6'>
     <h1 class=' has-text-centered text-focus-in has-text-white title is-1 is-size-2-mobile center mt-10 px-3'>Sign In.
     </h1>
     <div class="field pt-2">
-      <label class="label has-text-white">Username</label>
+      <label for="username" class="label has-text-white">Username</label>
       <div class="control has-icons-left has-icons-right">
-        <input class="input is-success" type="text" placeholder="Text input" value="bulma">
+        <input name="username" class="input" type="text" placeholder="Enter Your Username" value="">
         <span class="icon is-small is-left">
           <i class="fas fa-user"></i>
         </span>
@@ -26,13 +19,21 @@
           <i class="fas fa-check"></i>
         </span>
       </div>
-      <p class="help is-success">This username is available</p>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <p class="mt-2 has-text-white">{{ message }}</p>
+        {% endfor %}
+        </ul>
+      {% endif %}
+      {% endwith %}
     </div>
 
     <div class="field">
-      <label class="label has-text-white">Password</label>
+      <label for="password" class="label has-text-white">Password</label>
       <div class="control has-icons-left has-icons-right">
-        <input class="input is-success" type="text" placeholder="Text input" value="bulma">
+        <input name="password" class="input" type="text" placeholder="Enter Your Password" value="">
         <span class="icon is-small is-left">
           <i class="fas fa-user"></i>
         </span>
@@ -40,7 +41,6 @@
           <i class="fas fa-check"></i>
         </span>
       </div>
-      <p class="help is-success">This username is available</p>
     </div>
 
     <div class="center has-text-centered mx-2">
@@ -48,12 +48,12 @@
           <strong>Log in</strong>
         </button>
       <a href='signup.html'>
-        <button class="mx-1 button is-light is-medium">
+        <button type="button" class="mx-1 button is-light is-medium">
           Sign up
         </button>
       </a>
     </div>
   </div>
+  </form>
 </body>
-
-</html>
+{% endblock %}
