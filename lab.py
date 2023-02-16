@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -88,31 +89,44 @@ def lists():
 
 @app.route('/lists/<int:list_id>/')
 def showlist(list_id):
-    list = List.query.get_or_404(list_id)
-    lists = List.query.filter_by(user_id=current_user.id ).all()
-    listItems = ListItem.query.filter_by(list_id=list_id).all()
-    return render_template('list.html', list=list, lists=lists, listItems=listItems)
+    if current_user.is_authenticated:  
+        list = List.query.get_or_404(list_id)
+
+        if list.id != current_user.id:
+            return "Error: You do not have access"
+        else:
+            lists = List.query.filter_by(user_id=current_user.id ).all()
+            listItems = ListItem.query.filter_by(list_id=list_id).all()
+            return render_template('list.html', list=list, lists=lists, listItems=listItems)
+    else:
+        return "Error: user is not logged in"
 
 @app.route('/newlist.html', methods = ['GET','POST'])
 def newlist():
 
     if current_user.is_authenticated:
         lists = List.query.filter_by(user_id=current_user.id).all()
-        user_id = current_user.id
+        userid = current_user.id
     else: 
         return "Error: user is not logged in"
 
     if request.method == "POST":
         listname = request.form["listname"]
         count = request.form["countTracker"]
-        list = List(name=listname, user_id=user_id)
-        db.session.add(list)
-        db.session.commit()
-        
+
+        qrytext = text("INSERT INTO LISTS (name, user_id) VALUES (:listname, :userid);") 
+        qry = qrytext.bindparams(listname=listname, userid=userid)
+        db.session.execute(qry) 
+        db.session.commit() 
+
+        list = List.query.filter_by(name=listname).first()
+        listid = list.id
+
         for i in range(1, int(count)):
             itemname = request.form["listitem" + str(i)]
-            listitem = ListItem(name=itemname,completed=False,list_id=list.id)
-            db.session.add(listitem)
+            qrytext = text("INSERT INTO ITEMS (name, completed, list_id) VALUES (:itemname, False, :listid);") 
+            qry = qrytext.bindparams(itemname=itemname, listid=listid)
+            db.session.execute(qry) 
             
         db.session.commit()
 
