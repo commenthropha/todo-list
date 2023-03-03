@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+    <script src="{{url_for('static', filename='js/list.js')}}"></script>
+{% endblock %}
+
 {% block content %}
 <body class= 'is-flex is-flex-direction-column is-justify-content-space-between'>
 
@@ -7,24 +11,46 @@
         {% include 'components/navbar.html' %}
         
         <div class = 'my-3 px-6 py-5'>
-            <h1 class = 'title has-text-primary is-2 is-size-2-mobile'>
+            <h1 class = 'title has-text-primary is-2'>
                 {{list.name}}
             </h1>
         </div>
 
-        <div class = 'px-6'>
-            {% for entry in listItems %}
-                <p class = 'is-5'>
+        <div class = 'px-6 mb-5'>
+            <h2 class = 'subtitle has-text-primary is-3 mb-4'>Completed</h2>
+            {% for entry in completed %}
+                    <input class="checkbox" type="checkbox" value={{entry.id}} checked>
                     {{entry.name}}
-                    <br>
-                </a>
+                <br>
             {% else %}
-            <p>
-                No Lists Available
-            </p>
+                <p>
+                    No Items Available
+                </p>
             {% endfor %}
         </div>
-        <br>
+        <div class = 'px-6'>
+            <h2 class = 'subtitle has-text-primary is-3 mb-4'>Uncompleted</h2>
+            {% for entry in uncompleted %}
+                <input class="checkbox" type="checkbox" value={{entry.id}}>
+                {{entry.name}}
+            <br>
+            {% else %}
+                <p>
+                    No Items Available
+                </p>
+            {% endfor %}
+        </div>
+        <div class = "px-6 mt-6 pt-6">
+            <h2 class = 'subtitle has-text-primary is-3 mb-4'>Add an Item</h2>
+            <div class="field">
+                <label for="listname" class="label">Item Name</label>
+                <div class="control">
+                    <input class = "value" type = "hidden" value = {{list.id}}>
+                    <input class="input" type="text" placeholder="Enter item">
+                </div>
+            </div>
+            <button id = "submit" type='button' class="mt-4 button is-light">Submit</button>
+        </div>
     </div>
 
     {% include 'components/footer.html' %}

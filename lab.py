@@ -3,8 +3,9 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///todo.sqlite'
@@ -50,7 +51,7 @@ def login():
         if user:
             if(check_password_hash(user.password, password)):
                 login_user(user)
-                return redirect(url_for('lists', lists=lists))
+                return redirect(url_for('home', user=user, lists=lists))
             else:
                 flash("This is sad")
         else:
@@ -87,7 +88,7 @@ def lists():
         return "Error: user is not logged in"
         
 
-@app.route('/lists/<int:list_id>/')
+@app.route('/lists/<int:list_id>/', methods = ['GET', 'POST'])
 def showlist(list_id):
     if current_user.is_authenticated:  
         list = List.query.get_or_404(list_id)
@@ -95,12 +96,18 @@ def showlist(list_id):
         if list.id != current_user.id:
             return "Error: You do not have access"
         else:
-            lists = List.query.filter_by(user_id=current_user.id ).all()
+            lists = List.query.filter_by(user_id=current_user.id).all()
             listItems = ListItem.query.filter_by(list_id=list_id).all()
-            return render_template('list.html', list=list, lists=lists, listItems=listItems)
+            completed = ListItem.query.filter_by(list_id=list_id, completed=True).all()
+            uncompleted = ListItem.query.filter_by(list_id=list_id, completed=False).all()
+            return render_template('list.html', list=list, lists=lists, completed=completed, uncompleted=uncompleted)
     else:
         return "Error: user is not logged in"
+    
+    return render_template('list.html', list=list, lists=lists, completed=completed, uncompleted=uncompleted)
 
+      
+    
 @app.route('/newlist.html', methods = ['GET','POST'])
 def newlist():
 
@@ -155,3 +162,24 @@ def home():
         return render_template('home.html', user=user, lists=lists)
     else: 
         return "Error: user is not logged in"
+
+@app.route('/list' , methods = ['GET', 'POST'])
+def post():
+    if request.is_json:
+        if request.method == "POST":
+            activity = json.loads(request.data).get("activity")
+
+            if activity == "check":
+                returnid = json.loads(request.data).get("id")
+                listItem = ListItem.query.filter_by(id = returnid).first()
+                completed = listItem.completed
+                listItem.completed = not completed
+                db.session.commit()
+            if activity == "add":
+                content = json.loads(request.data).get("content")
+                listid = json.loads(request.data).get("id")
+                listItem = ListItem(content, False, listid)
+                db.session.add(listItem)
+                db.session.commit()
+
+            return jsonify({'valid': "Yes"})
